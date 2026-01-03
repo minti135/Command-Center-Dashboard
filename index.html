@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart City Command Center</title>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --panel-bg: #1a1f26;
+            --accent-blue: #00d4ff;
+            --text-color: #e0e0e0;
+            --border-color: #30363d;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Grid Layout: 20% | 60% | 20% */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            height: 100vh;
+            gap: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-blue);
+        }
+
+        /* Section 1: Smart Lighting (Left) */
+        .lighting-list {
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .pole-card {
+            background: #252b33;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #4caf50;
+            border-radius: 50%;
+        }
+
+        /* Section 2: GIS Map (Middle) */
+        #map-placeholder {
+            flex-grow: 1;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .map-mock {
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+            background-image: radial-gradient(circle, #333 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Section 3: CCTV (Right) */
+        .cctv-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .cctv-feed {
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            position: relative;
+        }
+        .cctv-label {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 5px;
+            font-size: 10px;
+        }
+
+        .rec-dot {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: red;
+            font-size: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    
+    <aside class="panel">
+        <div class="panel-header">Smart Poles</div>
+        <div class="lighting-list">
+            <div class="pole-card">
+                <div>Pole #001 <br><small>Main St.</small></div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="pole-card">
+                <div>Pole #002 <br><small>Oak Ave.</small></div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="pole-card">
+                <div>Pole #003 <br><small>Park Lane</small></div>
+                <div style="background-color: #ff9800" class="status-dot"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="panel">
+        <div class="panel-header">GIS Command View</div>
+        <div id="map-placeholder">
+            <div class="map-mock"></div>
+            <div style="position: absolute; color: var(--accent-blue);">[ GIS MAP INTERFACE ]</div>
+        </div>
+    </main>
+
+    <aside class="panel">
+        <div class="panel-header">CCTV Feeds</div>
+        <div class="cctv-grid">
+            <div class="cctv-feed">
+                <span class="cctv-label">CAM 01 - NORTH ENTRY</span>
+                <span class="rec-dot">● REC</span>
+            </div>
+            <div class="cctv-feed">
+                <span class="cctv-label">CAM 02 - PERIMETER</span>
+            </div>
+            <div class="cctv-feed">
+                <span class="cctv-label">CAM 03 - PARKING</span>
+                <span class="rec-dot">● REC</span>
+            </div>
+            <div class="cctv-feed">
+                <span class="cctv-label">CAM 04 - LOBBY</span>
+            </div>
+        </div>
+    </aside>
+
+</div>
+
+</body>
+</html>
 
