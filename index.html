@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart City Command Center</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
         :root {
             --bg-color: #0b0e14;
@@ -23,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* Grid Layout: 20% | 60% | 20% */
+        /* Grid Layout: Left (300px) | Middle (Flexible) | Right (350px) */
         .dashboard-container {
             display: grid;
             grid-template-columns: 300px 1fr 350px;
@@ -50,21 +53,28 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--accent-blue);
+            z-index: 1000; /* Keeps header above map */
         }
 
-        /* Section 1: Smart Lighting (Left) */
+        /* Left Section: Smart Lighting */
         .lighting-list {
             padding: 15px;
             overflow-y: auto;
         }
         .pole-card {
             background: #252b33;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 10px;
             border-radius: 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .pole-card:hover {
+            background: #303842;
+            border-left: 3px solid var(--accent-blue);
         }
         .status-dot {
             height: 10px;
@@ -73,24 +83,14 @@
             border-radius: 50%;
         }
 
-        /* Section 2: GIS Map (Middle) */
-        #map-placeholder {
+        /* Middle Section: GIS Map */
+        #map {
             flex-grow: 1;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        .map-mock {
             width: 100%;
-            height: 100%;
-            opacity: 0.5;
-            background-image: radial-gradient(circle, #333 1px, transparent 1px);
-            background-size: 30px 30px;
+            background: #000; /* Fallback */
         }
 
-        /* Section 3: CCTV (Right) */
+        /* Right Section: CCTV */
         .cctv-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -115,18 +115,24 @@
             background: rgba(0,0,0,0.7);
             padding: 2px 5px;
             font-size: 10px;
+            color: #fff;
         }
-
         .rec-dot {
             position: absolute;
             top: 5px;
             right: 5px;
-            color: red;
+            color: #ff4d4d;
             font-size: 10px;
             animation: blink 1s infinite;
         }
-
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* Customizing Leaflet Tooltips for Dark Mode */
+        .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+            background: var(--panel-bg);
+            color: white;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -136,16 +142,16 @@
     <aside class="panel">
         <div class="panel-header">Smart Poles</div>
         <div class="lighting-list">
-            <div class="pole-card">
-                <div>Pole #001 <br><small>Main St.</small></div>
+            <div class="pole-card" onclick="focusPole([40.7128, -74.0060])">
+                <div>Pole #001 <br><small>Broadway St.</small></div>
                 <div class="status-dot"></div>
             </div>
-            <div class="pole-card">
-                <div>Pole #002 <br><small>Oak Ave.</small></div>
+            <div class="pole-card" onclick="focusPole([40.7150, -74.0090])">
+                <div>Pole #002 <br><small>Wall St.</small></div>
                 <div class="status-dot"></div>
             </div>
-            <div class="pole-card">
-                <div>Pole #003 <br><small>Park Lane</small></div>
+            <div class="pole-card" onclick="focusPole([40.7180, -74.0020])">
+                <div>Pole #003 <br><small>Park Row</small></div>
                 <div style="background-color: #ff9800" class="status-dot"></div>
             </div>
         </div>
@@ -153,10 +159,7 @@
 
     <main class="panel">
         <div class="panel-header">GIS Command View</div>
-        <div id="map-placeholder">
-            <div class="map-mock"></div>
-            <div style="position: absolute; color: var(--accent-blue);">[ GIS MAP INTERFACE ]</div>
-        </div>
+        <div id="map"></div>
     </main>
 
     <aside class="panel">
@@ -181,6 +184,37 @@
 
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // 1. Initialize the map (Centered on New York as an example)
+    const map = L.map('map').setView([40.7128, -74.0060], 15);
+
+    // 2. Add Dark Mode Map Tiles (Using CartoDB Dark Matter)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    // 3. Add Smart Pole Markers
+    const pole1 = L.marker([40.7128, -74.0060]).addTo(map)
+        .bindPopup('<b>Smart Pole #001</b><br>Lighting: 80% Power');
+
+    const pole2 = L.marker([40.7150, -74.0090]).addTo(map)
+        .bindPopup('<b>Smart Pole #002</b><br>Lighting: 100% Power');
+
+    const pole3 = L.marker([40.7180, -74.0020]).addTo(map)
+        .bindPopup('<b>Smart Pole #003</b><br>Status: Warning - Hardware Error');
+
+    // 4. Function to move map when clicking the list items
+    function focusPole(coords) {
+        map.flyTo(coords, 17, {
+            animate: true,
+            duration: 1.5
+        });
+    }
+</script>
+
 </body>
 </html>
-
